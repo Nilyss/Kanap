@@ -14,8 +14,9 @@ async function displayProducts () {
             const itemLink = 
                 document.createElement("a")
                 document.querySelector(".items")
-                // itemLink = `href= "#${""}"`
                 .appendChild(itemLink);
+                itemLink.href =`"../html/product.html?id=${product._id}"`
+                
             const itemArticle = 
                 document.createElement("article")
                 itemLink.appendChild(itemArticle);
