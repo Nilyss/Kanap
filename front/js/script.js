@@ -4,46 +4,49 @@ let url = "http://localhost:3000/api/products";
 
 // Promesse asynchrone via API fetch()
 
-async function displayProducts () {
-    fetch(url)
-    .then(response => response.json())
-    .then(data => {
-        const productsList = data;
+async function displayProducts() {
+    await fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            const productsList = data;
+            // console.log(data);
 
-// Parcours le [array] contenu dans l'API et intégre les valeurs de celui-ci au DOM
+            // Parcours le [array] contenu dans l'API et intégre les valeurs de celui-ci au DOM
 
-        for (product of productsList) {
+            for (products of productsList) {
 
-            const itemLink = 
-                document.createElement("a")
-                document.querySelector(".items")
-                .appendChild(itemLink)
-                itemLink.href =`../html/product.html?id=${product._id}`;                
-            const itemArticle = 
-                document.createElement("article")
-                itemLink.appendChild(itemArticle);
-            const itemImg =
-                document.createElement("img")
-                itemArticle.appendChild(itemImg)
-                itemImg.src = product.imageUrl
-                itemImg.alt = product.altText;                
-            const itemTitle = 
-                document.createElement("h3")
-                itemArticle.appendChild(itemTitle)
-                itemTitle.innerText = product.name;
-                
-            const itemDescription =
-                document.createElement("p")
-                itemArticle.appendChild(itemDescription)  
-                itemDescription.innerText = product.description;                           
-        }
-    })
+                const itemsLink =
+                    document.createElement("a")
+                    document.querySelector(".items")
+                    .appendChild(itemsLink)
+                    itemsLink.href = `../html/product.html?id=${products._id}`;
 
-// Retourne l'erreur en cas de récupération de l'API échoué
+                const itemsArticle =
+                    document.createElement("article")
+                    itemsLink.appendChild(itemsArticle);
 
-    .catch (error => alert("Erreur : " + error));
-    return displayProducts;
-};
+                const itemsImg =
+                    document.createElement("img")
+                    itemsArticle.appendChild(itemsImg)
+                    itemsImg.src = products.imageUrl
+                    itemsImg.alt = products.altText;
+
+                const itemsTitle =
+                    document.createElement("h3")
+                    itemsArticle.appendChild(itemsTitle)
+                    itemsTitle.innerText = products.name;
+
+                const itemsDescription =
+                    document.createElement("p")
+                    itemsArticle.appendChild(itemsDescription)
+                    itemsDescription.innerText = products.description;
+            }
+        })
+
+        // Retourne l'erreur en cas de récupération de l'API échoué
+
+        .catch(error => alert("Erreur : " + error));
+}
 
 // Application de la fonction asymétrique "displayProducts()"
 

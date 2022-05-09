@@ -16,27 +16,27 @@ class Api {
 
     productList() {
         fetch(this._url)
-            .then(response => response.json())
+            .then(response => {
+                return response.json()
+            })
             .then(data => {
-                const productList = data;
+                return data;
             })
             .catch(erreur => ("Erreur :" + erreur))
-            return this.url;
     }
     
-    get product() {
-        return this.productList();
-    }
+    // get product() {
+    //     return this.productList();
+    // }
 }
 
-const apiUrl = "http://localhost:3000/api/products";
 
 
 
 
-
-
-
+async function extractProduct () {
+    const product = new Api("http://localhost:3000/api/products");
+}
 
 
 
