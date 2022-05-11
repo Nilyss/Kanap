@@ -1,75 +1,45 @@
-// Stockage url de l'API
+// Insertion dans le DOM de l'ID du produit sélectionée
 
-let url = "http://localhost:3000/api/products/";
+class ProductController {
+    constructor() {
+        this.product = new ProductService();
 
-// Récupération de l'id de l'url via URLSearchParams
+        // Récupération de l'ID du produit séléctionée
 
-let currentUrl = new URL(window.location.href);
-let productId = currentUrl.searchParams.get("id");
-
-// Stock adresse API & cible l'ID du produit
-
-let urlProductId = url + productId;
-
-// Récupération donnée du produit depuis l'id
-
-async function extractProduct() {
-
-    return fetch(urlProductId)
-        .then(response => {
-            console.log(response)
-            return response.json()
-        })
-        .then(responseData => {
-            console.log(responseData)
-            return responseData;
-        })
-        // Retourne l'erreur en cas de récupération de l'API échoué.
-        .catch(error => ("Erreur : " + error));
-}
-
-// Intégration dans le dom de l'ID extraite de l'API
-
-async function displayProducts(product) {
-
-    const itemImg =
-        document.createElement("img")
-        document.querySelector(".item__img")
-            .appendChild(itemImg);
-        itemImg.src = product.imageUrl;
-        itemImg.alt = product.altText;
-
-    const itemTitle =
-        document.getElementById("title")
-        itemTitle.innerHTML = product.name;
-
-    const itemPrice =
-        document.getElementById("price")
-        itemPrice.innerHTML = product.price;
-
-    const itemDescription =
-        document.getElementById("description")
-        itemDescription.innerHTML = product.description;
-
-    for(color of product.colors) {
-        const itemColors = document.createElement("option");
-        document.getElementById("colors")
-            .appendChild(itemColors);
-        itemColors.value = color;
-        itemColors.innerHTML = color;
+        this.currentUrl = new URL(window.location.href);
+        this.productId = this.currentUrl.searchParams.get("id");
     }
 
+    async display() {
+        const insertProduct = await this.product.getProduct(this.productId);
+        const itemImg =
+            document.createElement("img")
+            document.querySelector(".item__img")
+                .appendChild(itemImg);
+            itemImg.src = insertProduct.imageUrl;
+            itemImg.alt = insertProduct.altText;
+
+        const itemTitle =
+            document.getElementById("title")
+            itemTitle.innerText = insertProduct.name;
+
+        const itemPrice =
+            document.getElementById("price")
+            itemPrice.innerText = insertProduct.price;
+
+        const itemDescription =
+            document.getElementById("description")
+            itemDescription.innerText = insertProduct.description;  
+        
+        for (const color of insertProduct.colors) {
+            const itemColors = document.createElement("option");
+            document.getElementById("colors")
+                .appendChild(itemColors);
+            itemColors.value = color;
+            itemColors.innerHTML = color;
+        }      
+    }
 }
 
-
-//***********************************************************************************************************/
-
-// Fonction main
-
-async function main() {
-   const product = await extractProduct();
-   displayProducts(product);
-}
-
-main();
-
+const app = new ProductController();
+app.display();
