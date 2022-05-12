@@ -11,35 +11,36 @@ class ProductController {
     }
 
     async display() {
-        const insertProduct = await this.product.getProduct(this.productId);
+        const getProduct = await this.product.getProduct(this.productId);
         const itemImg =
             document.createElement("img")
             document.querySelector(".item__img")
                 .appendChild(itemImg);
-            itemImg.src = insertProduct.imageUrl;
-            itemImg.alt = insertProduct.altText;
+            itemImg.src = getProduct.imageUrl;
+            itemImg.alt = getProduct.altText; // /!\ retourne undefind fix à prévoir
 
         const itemTitle =
             document.getElementById("title")
-            itemTitle.innerText = insertProduct.name;
+            itemTitle.innerText = (getProduct.name);
 
         const itemPrice =
             document.getElementById("price")
-            itemPrice.innerText = insertProduct.price;
+            itemPrice.innerText = getProduct.price;
 
         const itemDescription =
             document.getElementById("description")
-            itemDescription.innerText = insertProduct.description;  
+            itemDescription.innerText = getProduct.description;  
         
-        for (const color of insertProduct.colors) {
+        for (const color of getProduct.colors) {
             const itemColors = document.createElement("option");
             document.getElementById("colors")
                 .appendChild(itemColors);
             itemColors.value = color;
             itemColors.innerHTML = color;
-        }      
+        }
+        
     }
 }
 
-const app = new ProductController();
-app.display();
+const productApp = new ProductController();
+productApp.display();
