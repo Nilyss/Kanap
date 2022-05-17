@@ -23,7 +23,7 @@ class ProductsController {
                     document.createElement("img")
                     itemsArticle.appendChild(itemsImg)
                     itemsImg.src = p.imageUrl
-                    itemsImg.alt = p.altText;
+                    itemsImg.alt = p.altTxt;
 
                 const itemsTitle =
                     document.createElement("h3")

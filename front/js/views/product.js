@@ -17,8 +17,7 @@ class ProductController {
             document.querySelector(".item__img")
                 .appendChild(itemImg);
             itemImg.src = getProduct.imageUrl;
-            itemImg.alt = getProduct.altText; // /!\ retourne undefind fix à prévoir
-
+            itemImg.alt = getProduct.altTxt;
         const itemTitle =
             document.getElementById("title")
             itemTitle.innerText = (getProduct.name);
