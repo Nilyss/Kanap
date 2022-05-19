@@ -9,32 +9,38 @@ class cartController {
         
         // Intégration dans le DOM du contenu récupérer depuis le localStorage
 
-        const addProduct = JSON.parse(localStorage.getItem("product")); // récupération du contenu du localStorage
-        
+        const getProduct = JSON.parse(localStorage.getItem("product")); // récupération du contenu du localStorage
 
-        if (addProduct === null) {    // En cas de localStorage vide, renvois un message de panier vide
+
+        // En cas de localStorage vide, renvois un message de panier vide
+
+        if (getProduct === null) {
             document.getElementById("cart__items").innerHTML +=
                 `<div class="cart__item__img">
                 <p>Aucun article(s) dans le panier</p>
-            </div>` ;
+            </div>`;
+            
 
-        } else {        // En cas de produit présent dans le localStorage
+        // En cas de produit présent dans le localStorage
 
-            for (let item of addProduct) {  // Parcours le localStorage via une boucle et incrémente chaque élément dans le DOM
+        } else { 
 
-                const getProductdetails = await this.cart.getProduct(item.idSelectedProduct); // Récupère les détails du produit extrait depuis le localStorage via la méthode qui contacte l'API
+            for (let item of getProduct) {  // Parcours le localStorage via une boucle et incrémente chaque élément dans le DOM
 
-                document.getElementById("cart__items").innerHTML +=
+                const getProductDetails = await this.cart.getProduct(item.idSelectedProduct); // Récupère les détails du produit extrait depuis le localStorage via la méthode qui contacte l'API
+
+                document.getElementById("cart__items").innerHTML +=  // Incrémentation dans le DOM des informations relatives au produits grace au interpolated string
+
                     `
                 <article class="cart__item" data-id=${item.idSelectedProduct} data-color=${item.colorSelectedProduct}>
                     <div class="cart__item__img">
-                        <img src=${getProductdetails.imageUrl} alt=${getProductdetails.altTxt}>
+                        <img src=${getProductDetails.imageUrl} alt=${getProductDetails.altTxt}>
                     </div>
                     <div class="cart__item__content">
                         <div class="cart__item__content__description">
-                            <h2>${getProductdetails.name}</h2>
+                            <h2>${getProductDetails.name}</h2>
                             <p>${item.colorSelectedProduct}</p>
-                            <p>${getProductdetails.price}</p>
+                            <p>${getProductDetails.price}</p>
                          </div>
                         <div class="cart__item__content__settings">
                             <div class="cart__item__content__settings__quantity">
