@@ -69,7 +69,7 @@ class addToCartController {
                         let newQuantity = parseInt(findProducts.quantitySelectedProduct) + parseInt(selectedProduct.quantitySelectedProduct);
                             findProducts.quantitySelectedProduct = newQuantity;
                             localStorage.setItem("product", JSON.stringify(productArray));
-                        alert(`Ce produit est actuellement en ${findProducts.quantitySelectedProduct} exemplaires dans le panier`)
+                            alert(`Ce produit est actuellement en ${findProducts.quantitySelectedProduct} exemplaires dans le panier`)
                     }
 
                     // Si aucun produit avec la même ID est trouvé, ajoute le nouveau produit au localStorage déjà crée précédement
