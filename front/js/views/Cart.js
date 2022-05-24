@@ -11,8 +11,6 @@ class cartController {
 
         let getProduct = this.product.getProductStorage(); // récupération du contenu du localStorage
         console.log(getProduct, "getProduct");
-        
-
 
         // En cas de localStorage vide, renvois un message de panier vide
 
@@ -42,7 +40,7 @@ class cartController {
                         <div class="cart__item__content__description">
                             <h2>${getProductDetails.name}</h2>
                             <p>${item.colorSelectedProduct}</p>
-                            <p>${getProductDetails.price}</p>
+                            <p>${getProductDetails.price} €</p>
                          </div>
                         <div class="cart__item__content__settings">
                             <div class="cart__item__content__settings__quantity">
@@ -62,13 +60,15 @@ class cartController {
 
             // Récupère l'input contenant la quantité d'un produit
 
-            let itemQuantity = document.querySelectorAll('.itemQuantity');
+            let itemQuantity = document.querySelectorAll(".itemQuantity");
 
+            // Récupère le bouton de suppression du produit
+
+            let deleteProduct = document.querySelectorAll(".cart__item__content__settings__delete");
             
-            // Crée un array récupérant les informations relatives à chaques input
+            // Crée un array récupérant les informations relatives à chaques input de quantité
 
             Array.prototype.filter.call(itemQuantity, (element) => {
-                console.log(itemQuantity,"test");
                 let parent = element.closest("article");
                 let parentId = parent.dataset.id;
                 let parentColor = parent.dataset.color;
@@ -88,6 +88,36 @@ class cartController {
                     let productChoosen = getProduct.filter(p => p.colorSelectedProduct === parentColor && p.idSelectedProduct === parentId)[0];
                     productChoosen.quantitySelectedProduct = newQuantity;
                     localStorage.setItem("product", JSON.stringify(getProduct));                
+                })
+            })
+
+            // Crée un array récupérant les informations relatives à chaques bouton de suppression
+
+            Array.prototype.filter.call(deleteProduct, (element) => {
+                let parent = element.closest("article");
+                let parentId = parent.dataset.id;
+                let parentColor = parent.dataset.color;
+
+                // écoute le bouton de suppression cliqué par l'utilisateur
+
+                element.addEventListener("click", (e) => {
+                    
+                    // Supprime l'élément du localStorage
+                    
+                    let productChoosen = getProduct.filter(p => p.colorSelectedProduct === parentColor && p.idSelectedProduct === parentId)[0];
+                    let index = getProduct.indexOf(productChoosen);
+                    getProduct.splice(index, 1);
+                    localStorage.setItem("product", JSON.stringify(getProduct));
+
+                    // Recharge la page pour mettre à jour le DOM après suppression du produit
+
+                    window.location.reload();
+
+                    // Si plus aucun produit n'est présent dans le localStorage, supprime la clé "product".
+
+                    if(getProduct.length < 1) {
+                        localStorage.clear();
+                    }
                 })
             })
         }
