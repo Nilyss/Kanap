@@ -2,14 +2,16 @@
 
 class cartController {
     constructor() {
-        this.cart = new ProductService();
+        this.product = new ProductService();
     }
 
     async showCart() {
         
         // Intégration dans le DOM du contenu récupérer depuis le localStorage
 
-        const getProduct = JSON.parse(localStorage.getItem("product")); // récupération du contenu du localStorage
+        let getProduct = this.product.getProductStorage(); // récupération du contenu du localStorage
+        console.log(getProduct, "getProduct");
+        
 
 
         // En cas de localStorage vide, renvois un message de panier vide
@@ -27,7 +29,7 @@ class cartController {
 
             for (let item of getProduct) {  // Parcours le localStorage via une boucle et incrémente chaque élément dans le DOM
 
-                const getProductDetails = await this.cart.getProduct(item.idSelectedProduct); // Récupère les détails du produit extrait depuis le localStorage via la méthode qui contacte l'API
+                const getProductDetails = await this.product.getProduct(item.idSelectedProduct); // Récupère les détails du produit extrait depuis le localStorage via la méthode qui contacte l'API
 
                 document.getElementById("cart__items").innerHTML +=  // Incrémentation dans le DOM des informations relatives au produits grace au interpolated string
 
@@ -56,6 +58,38 @@ class cartController {
 
                 `
             }
+
+
+            // Récupère l'input contenant la quantité d'un produit
+
+            let itemQuantity = document.querySelectorAll('.itemQuantity');
+
+            
+            // Crée un array récupérant les informations relatives à chaques input
+
+            Array.prototype.filter.call(itemQuantity, (element) => {
+                console.log(itemQuantity,"test");
+                let parent = element.closest("article");
+                let parentId = parent.dataset.id;
+                let parentColor = parent.dataset.color;
+
+
+                // écoute l'input modifier par l'utilisateur
+
+                element.addEventListener("change", (e) => {
+
+                    // Stock la nouvelle valeur de quantité sélectionnée 
+
+                    let newQuantity = element.value;
+
+                    /* Récupère le produit en question dans le localStorage (filtre la couleur ainsi que l'id) et remplace la valeur
+                    de la quantité dans le localStorage */
+
+                    let productChoosen = getProduct.filter(p => p.colorSelectedProduct === parentColor && p.idSelectedProduct === parentId)[0];
+                    productChoosen.quantitySelectedProduct = newQuantity;
+                    localStorage.setItem("product", JSON.stringify(getProduct));                
+                })
+            })
         }
     }
 }
