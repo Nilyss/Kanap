@@ -10,8 +10,7 @@ class cartController {
         // Intégration dans le DOM du contenu récupérer depuis le localStorage
 
         let getProduct = this.product.getProductStorage(); // récupération du contenu du localStorage
-        console.log(getProduct, "getProduct");
-
+        
         // En cas de localStorage vide, renvois un message de panier vide
 
         if (getProduct === null) {
@@ -121,6 +120,126 @@ class cartController {
                 })
             })
         }
+
+        // ************* Envois de la demande de commande *************
+
+        // Récupération de chaque élément du form dans le DOM
+
+        let firstName = document.getElementById("firstName");
+        let lastName = document.getElementById("lastName");
+        let address = document.getElementById("address");
+        let city = document.getElementById("city");
+        let email = document.getElementById("email");
+
+        let submitOrder = document.getElementById("order");
+
+        // Création des Regex et les stocks dans des variables
+
+        let validateFirstName = /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/;
+        let validateLastName = validateFirstName;
+        let validateAddress = /^[#.0-9a-zA-ZÀ-ÿ\s,-]{2,60}$/;
+        let validateCity = validateFirstName;
+        let validateEmail = /^[_a-z0-9-]+(.[_a-z0-9-]+)*@[a-z0-9-]+(.[a-z0-9-]+)*(.[a-z]{2,4})$/;
+
+        //  Récupération de chaque <p> indiquant une erreur en cas de validation d'un input du form refusé
+
+        let errorFirstName = document.getElementById("firstNameErrorMsg");
+        let errorLastName = document.getElementById("lastNameErrorMsg");
+        let errorAddress = document.getElementById("addressErrorMsg");
+        let errorCity = document.getElementById("cityErrorMsg");
+        let errorEmail = document.getElementById("emailErrorMsg");
+
+        // Si le localStorage contient des éléments, passe à la validation du formulaire depuis le button
+
+        submitOrder.addEventListener("click", function (event) {
+
+            // Récupère la valeur entrée dans l'input de chaque élément du formulaire
+
+            let checkFirstName = firstName.value;
+            let checkLastName = lastName.value;
+            let checkAddress = address.value;
+            let checkCity = city.value;
+            let checkEmail = email.value;
+
+            function validationForm() {
+
+                // Si le localStorage est vide, renvois une erreur à l'utilisateur
+
+                if (getProduct === null) {
+                    alert("Vous n'avez séléctionné aucun produit !")
+                    return false;
+                }
+                else if (validateFirstName.test(checkFirstName) == false || checkFirstName === null) {
+                    errorFirstName.innerHTML = "Veillez renseigner votre prénom";
+                    return false;
+                }
+                else if (validateLastName.test(checkLastName) == false || checkLastName === null) {
+                    errorLastName.innerHTML = "Veillez renseigner votre nom";
+                    return false;
+                }
+                else if (validateAddress.test(checkAddress) == false) {
+                    errorAddress.innerHTML = "Veillez renseigner votre adresse avec les informations suivantes : Numéro, voie, nom de la voie, code postal";
+                    return false;
+                }
+                else if (validateCity.test(checkCity) == false) {
+                    errorCity.innerHTML = "Veuillez renseigner votre ville";
+                    return false;
+                }
+                else if (validateEmail.test(checkEmail) == false) {
+                    errorEmail.innerHTML = "Saisie de l'adresse mail incorrect";
+                    return false;
+                }
+
+                // Si chaque input passe la validation des Regex
+
+                else {
+
+                    // Création d'un objet contact
+
+                    let contact = {
+                        firstName: firstName.value,
+                        lastName: lastName.value,
+                        address: address.value,
+                        city: city.value,
+                        email: email.value
+                    }
+
+                    // Création d'un array afin d'y push tout les produits de la commande ainsi que leurs quantitée
+
+                    let products = [];
+
+                    // Parcours le localStorage et push les ID dans la variable products
+                    for (let product of getProduct) {
+                        products.push(product.idSelectedProduct)
+                    };
+
+                    // Crée un objet contenant la liste des informations du formulaire et des produits de la commande
+
+                    let userOrder = {contact, products};
+                    console.log(userOrder,'test before fetch');
+
+                    // Création de la requete de POST sur l'API afin d'y envoyer l'objet userOrder & récupéré l'id de la commande
+
+                    let options = {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(userOrder)
+                    };
+                    
+                    fetch("http://localhost:3000/api/products/order/", options)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data, "console.log 'data'");
+                            alert(data);
+                            window.location = `./confirmation.html?orderid=${data.orderId}`;                            
+                        })
+                        .catch(error => ("Erreur : " + error))
+                }
+            }
+            validationForm();
+        })
     }
 }
 
