@@ -1,17 +1,24 @@
-// class confirmationController {
-//     constructor() {
-//         this.confirmation = new ProductService();
+class confirmationController {
+    constructor() {
+        this.confirmation = new ProductService();
 
-//         // Récupération de l'ID du produit séléctionée
+        // Récupération de l'ID de la commande
 
-//         this.currentUrl = new URL(window.location.href);
-//         this.productId = this.currentUrl.searchParams.get("id");
-//     }
+        this.currentUrl = new URL(window.location.href);
+        this.productId = this.currentUrl.searchParams.get("orderid");
+    }
 
-//     async showOrder() {
-        
-//     }
-// }
+        // Affichage du numéro de la commande
 
-// const confirmationApp = new confirmationController();
-// confirmationApp.display();
+    async showOrder() {
+        let showOrderId = document.querySelector("#orderId");
+        showOrderId.innerText = (this.productId);
+
+        // Suppression du contenu du localStorage
+
+        localStorage.clear();
+    };
+}
+
+const confirmationApp = new confirmationController();
+confirmationApp.showOrder();

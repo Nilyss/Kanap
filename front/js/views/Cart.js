@@ -216,7 +216,6 @@ class cartController {
                     // Crée un objet contenant la liste des informations du formulaire et des produits de la commande
 
                     let userOrder = {contact, products};
-                    console.log(userOrder,'test before fetch');
 
                     // Création de la requete de POST sur l'API afin d'y envoyer l'objet userOrder & récupéré l'id de la commande
 
@@ -231,8 +230,6 @@ class cartController {
                     fetch("http://localhost:3000/api/products/order/", options)
                         .then(response => response.json())
                         .then(data => {
-                            console.log(data, "console.log 'data'");
-                            alert(data);
                             window.location = `./confirmation.html?orderid=${data.orderId}`;                            
                         })
                         .catch(error => ("Erreur : " + error))
