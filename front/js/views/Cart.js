@@ -90,6 +90,13 @@ class cartController {
                 })
             })
 
+
+            // Calcul des prix totaux :
+
+            // let itemPrice = 
+
+
+
             // Crée un array récupérant les informations relatives à chaques bouton de suppression
 
             Array.prototype.filter.call(deleteProduct, (element) => {
