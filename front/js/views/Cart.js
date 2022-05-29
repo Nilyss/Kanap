@@ -6,11 +6,11 @@ class cartController {
     }
 
     async showCart() {
-        
+
         // Intégration dans le DOM du contenu récupérer depuis le localStorage
 
         let getProduct = this.product.getProductStorage(); // récupération du contenu du localStorage
-        
+
         // En cas de localStorage vide, renvois un message de panier vide
 
         if (getProduct === null) {
@@ -18,13 +18,16 @@ class cartController {
                 `<div class="cart__item__img">
                 <p>Aucun article(s) dans le panier</p>
             </div>`;
-            
 
-        // En cas de produit présent dans le localStorage
 
-        } else { 
+            // En cas de produit présent dans le localStorage
 
-            for (let item of getProduct) {  // Parcours le localStorage via une boucle et incrémente chaque élément dans le DOM
+        } else {
+
+            let quantityArray = []; // Création d'un Array pour le stockage du nombre d'articles séléctioné
+            let priceArray = []; // Création Array pour le stockage du prix total de chaque produit
+
+            for (let item of getProduct) {  // Parcours le localStorage via une boucle et incrémente chaque élément dans le DOM & le calcul du prix de chaque ID
 
                 const getProductDetails = await this.product.getProduct(item.idSelectedProduct); // Récupère les détails du produit extrait depuis le localStorage via la méthode qui contacte l'API
 
@@ -54,8 +57,34 @@ class cartController {
                 </article>
 
                 `
+                // ********* Calcul des prix & des quantité ************** //
+
+                let totalIdQuantity = item.quantitySelectedProduct;
+                quantityArray.push(totalIdQuantity);
+
+                let totalIdPrice = (getProductDetails.price) * (item.quantitySelectedProduct);
+                priceArray.push(totalIdPrice);               
             }
 
+            let orderInitialValue = 0;
+
+            let quantityCalculate = quantityArray.reduce(
+                (previousValue, currentValue) => parseInt(previousValue) + parseInt(currentValue)
+            );
+
+            let orderPriceCalculate = priceArray.reduce(
+                (previousValue, currentValue) => previousValue + currentValue, orderInitialValue
+            );
+            
+            // Récupère le paragraphe quantité totale du DOM et incrémente les valeur calculer de quantité et de prix total
+
+            let getOrderQuantity = document.getElementById("totalQuantity");
+            getOrderQuantity.innerText = `${quantityCalculate}`;
+
+            let getOrderPrice = document.getElementById("totalPrice");
+            getOrderPrice.innerText = `${orderPriceCalculate}`;
+
+            
 
             // Récupère l'input contenant la quantité d'un produit
 
@@ -64,7 +93,7 @@ class cartController {
             // Récupère le bouton de suppression du produit
 
             let deleteProduct = document.querySelectorAll(".cart__item__content__settings__delete");
-            
+
             // Crée un array récupérant les informations relatives à chaques input de quantité
 
             Array.prototype.filter.call(itemQuantity, (element) => {
@@ -86,16 +115,13 @@ class cartController {
 
                     let productChoosen = getProduct.filter(p => p.colorSelectedProduct === parentColor && p.idSelectedProduct === parentId)[0];
                     productChoosen.quantitySelectedProduct = newQuantity;
-                    localStorage.setItem("product", JSON.stringify(getProduct));                
+                    localStorage.setItem("product", JSON.stringify(getProduct));
+
+                    // Recharge la page pour mettre à jour le prix total du panier
+
+                    window.location.reload();
                 })
             })
-
-
-            // Calcul des prix totaux :
-
-            // let itemPrice = 
-
-
 
             // Crée un array récupérant les informations relatives à chaques bouton de suppression
 
@@ -107,9 +133,9 @@ class cartController {
                 // écoute le bouton de suppression cliqué par l'utilisateur
 
                 element.addEventListener("click", (e) => {
-                    
+
                     // Supprime l'élément du localStorage
-                    
+
                     let productChoosen = getProduct.filter(p => p.colorSelectedProduct === parentColor && p.idSelectedProduct === parentId)[0];
                     let index = getProduct.indexOf(productChoosen);
                     getProduct.splice(index, 1);
@@ -121,12 +147,13 @@ class cartController {
 
                     // Si plus aucun produit n'est présent dans le localStorage, supprime la clé "product".
 
-                    if(getProduct.length < 1) {
+                    if (getProduct.length < 1) {
                         localStorage.clear();
                     }
                 })
             })
         }
+
 
         // ************* Envois de la demande de commande *************
 
@@ -222,7 +249,7 @@ class cartController {
 
                     // Crée un objet contenant la liste des informations du formulaire et des produits de la commande
 
-                    let userOrder = {contact, products};
+                    let userOrder = { contact, products };
 
                     // Création de la requete de POST sur l'API afin d'y envoyer l'objet userOrder & récupéré l'id de la commande
 
@@ -233,11 +260,11 @@ class cartController {
                         },
                         body: JSON.stringify(userOrder)
                     };
-                    
+
                     fetch("http://localhost:3000/api/products/order/", options)
                         .then(response => response.json())
                         .then(data => {
-                            window.location = `./confirmation.html?orderid=${data.orderId}`;                            
+                            window.location = `./confirmation.html?orderid=${data.orderId}`;
                         })
                         .catch(error => ("Erreur : " + error))
                 }
