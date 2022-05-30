@@ -3,6 +3,7 @@
 class cartController {
     constructor() {
         this.product = new ProductService();
+
     }
 
     async showCart() {
@@ -24,8 +25,8 @@ class cartController {
 
         } else {
 
-            let quantityArray = []; // Création d'un Array pour le stockage du nombre d'articles séléctioné
-            let priceArray = []; // Création Array pour le stockage du prix total de chaque produit
+            // let quantityArray = []; // Création d'un Array pour le stockage du nombre d'articles séléctioné
+
 
             for (let item of getProduct) {  // Parcours le localStorage via une boucle et incrémente chaque élément dans le DOM & le calcul du prix de chaque ID
 
@@ -56,35 +57,12 @@ class cartController {
                     </div>
                 </article>
 
-                `
-                // ********* Calcul des prix & des quantité ************** //
-
-                let totalIdQuantity = item.quantitySelectedProduct;
-                quantityArray.push(totalIdQuantity);
-
-                let totalIdPrice = (getProductDetails.price) * (item.quantitySelectedProduct);
-                priceArray.push(totalIdPrice);               
+                `           
             }
 
-            let orderInitialValue = 0;
+            // Incrémente dans le DOM la somme des quantité ainsi que du prix du panier
 
-            let quantityCalculate = quantityArray.reduce(
-                (previousValue, currentValue) => parseInt(previousValue) + parseInt(currentValue)
-            );
-
-            let orderPriceCalculate = priceArray.reduce(
-                (previousValue, currentValue) => previousValue + currentValue, orderInitialValue
-            );
-            
-            // Récupère le paragraphe quantité totale du DOM et incrémente les valeur calculer de quantité et de prix total
-
-            let getOrderQuantity = document.getElementById("totalQuantity");
-            getOrderQuantity.innerText = `${quantityCalculate}`;
-
-            let getOrderPrice = document.getElementById("totalPrice");
-            getOrderPrice.innerText = `${orderPriceCalculate}`;
-
-            
+            await this.product.totalSum();
 
             // Récupère l'input contenant la quantité d'un produit
 
@@ -92,9 +70,7 @@ class cartController {
 
             // Récupère le bouton de suppression du produit
 
-            let deleteProduct = document.querySelectorAll(".cart__item__content__settings__delete");
-
-            // Crée un array récupérant les informations relatives à chaques input de quantité
+            let deleteProduct = document.querySelectorAll(".cart__item__content__settings__delete");           
 
             Array.prototype.filter.call(itemQuantity, (element) => {
                 let parent = element.closest("article");
@@ -119,7 +95,7 @@ class cartController {
 
                     // Recharge la page pour mettre à jour le prix total du panier
 
-                    window.location.reload();
+                    this.product.totalCalculPrix();
                 })
             })
 
@@ -185,7 +161,8 @@ class cartController {
 
         // Si le localStorage contient des éléments, passe à la validation du formulaire depuis le button
 
-        submitOrder.addEventListener("click", function (event) {
+        submitOrder.addEventListener("click", (event) => {
+            event.preventDefault();
 
             // Récupère la valeur entrée dans l'input de chaque élément du formulaire
 
@@ -195,7 +172,7 @@ class cartController {
             let checkCity = city.value;
             let checkEmail = email.value;
 
-            function validationForm() {
+            const validationForm = () => {
 
                 // Si le localStorage est vide, renvois une erreur à l'utilisateur
 
@@ -253,20 +230,7 @@ class cartController {
 
                     // Création de la requete de POST sur l'API afin d'y envoyer l'objet userOrder & récupéré l'id de la commande
 
-                    let options = {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify(userOrder)
-                    };
-
-                    fetch("http://localhost:3000/api/products/order/", options)
-                        .then(response => response.json())
-                        .then(data => {
-                            window.location = `./confirmation.html?orderid=${data.orderId}`;
-                        })
-                        .catch(error => ("Erreur : " + error))
+                    this.product.postContact(userOrder);
                 }
             }
             validationForm();
