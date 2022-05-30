@@ -15,4 +15,22 @@ class Api {
             })
             .catch(erreur => ("Erreur :" + erreur))
     }
+
+    async post(val, userOrder) {
+        let options = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(userOrder)
+        };
+
+        fetch(this._url + val, options)
+            .then(response => response.json())
+            .then(data => {
+                window.location = `./confirmation.html?orderid=${data.orderId}`;
+            })
+            .catch(error => ("Erreur : " + error))
+    }
+
 }
