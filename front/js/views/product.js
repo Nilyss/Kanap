@@ -66,6 +66,13 @@ class ProductController {
                 quantitySelectedProduct: getProductQuantity.value,
             };
 
+
+            // Contrôle que la limite de quantité n'est pas dépassé
+
+            if (selectedProduct.quantitySelectedProduct > 100) {
+                selectedProduct.quantitySelectedProduct = 100;
+            };
+ 
             // Création du localStorage 
 
             let productArray = JSON.parse(localStorage.getItem("product"));
@@ -103,6 +110,9 @@ class ProductController {
 
                         let newQuantity = parseInt(findProducts.quantitySelectedProduct) + parseInt(selectedProduct.quantitySelectedProduct);
                         findProducts.quantitySelectedProduct = newQuantity;
+                        if(newQuantity > 100) {
+                            newQuantity = 100;
+                        }
                         localStorage.setItem("product", JSON.stringify(productArray));
                         alert(`Ce produit est actuellement en ${findProducts.quantitySelectedProduct} exemplaires dans le panier`)
                     }

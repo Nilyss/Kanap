@@ -92,6 +92,10 @@ class cartController {
 
                     let productChoosen = getProduct.filter(p => p.colorSelectedProduct === parentColor && p.idSelectedProduct === parentId)[0];
                     productChoosen.quantitySelectedProduct = newQuantity;
+                    if(productChoosen.quantitySelectedProduct > 100) {
+                        productChoosen.quantitySelectedProduct = 100;
+                    };
+
                     localStorage.setItem("product", JSON.stringify(getProduct));
 
                     // met à jour dans le DOM la somme des quantité ainsi que du prix du panier
