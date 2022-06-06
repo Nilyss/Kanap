@@ -1,8 +1,8 @@
-// Controller ajout d'un produit au panier 
+// Insertion dans le DOM de l'ID du produit sélectionée
 
-class addToCartController {
+class ProductController {
     constructor() {
-        this.addToCartProduct = new ProductService();
+        this.product = new ProductService();
 
         // Récupération de l'ID du produit séléctionée
 
@@ -10,11 +10,46 @@ class addToCartController {
         this.productId = this.currentUrl.searchParams.get("id");
     }
 
+
+    //**************** Fonction pour l'intégration dans le DOM des produits extrait depuis l'API ********************
+
+    async display() {
+        const getProduct = await this.product.getProduct(this.productId);
+        const itemImg =
+            document.createElement("img")
+            document.querySelector(".item__img")
+                .appendChild(itemImg);
+            itemImg.src = getProduct.imageUrl;
+            itemImg.alt = getProduct.altTxt;
+        const itemTitle =
+            document.getElementById("title")
+            itemTitle.innerText = (getProduct.name);
+
+        const itemPrice =
+            document.getElementById("price")
+            itemPrice.innerText = getProduct.price;
+
+        const itemDescription =
+            document.getElementById("description")
+            itemDescription.innerText = getProduct.description;  
+        
+        for (const color of getProduct.colors) {
+            const itemColors = document.createElement("option");
+            document.getElementById("colors")
+                .appendChild(itemColors);
+            itemColors.value = color;
+            itemColors.innerHTML = color;
+        }
+        
+    }
+
+    //******************* Fonction pour la création du localStorage *********************
+
     async addToCart() {
 
         // Récupération des informations contenu dans l'API nécessaire à l'ajout au panier : ID / Couleur / quantitée
 
-        const getProductId = await this.addToCartProduct.getProduct(this.productId);
+        const getProductId = await this.product.getProduct(this.productId);
         const getProductColor = document.getElementById("colors");
         const getProductQuantity = document.getElementById("quantity");
 
@@ -31,17 +66,24 @@ class addToCartController {
                 quantitySelectedProduct: getProductQuantity.value,
             };
 
+
+            // Contrôle que la limite de quantité n'est pas dépassé
+
+            if (selectedProduct.quantitySelectedProduct > 100) {
+                selectedProduct.quantitySelectedProduct = 100;
+            };
+ 
             // Création du localStorage 
 
             let productArray = JSON.parse(localStorage.getItem("product"));
 
             if (selectedProduct.colorSelectedProduct == "") { // Vérifie le choix d'une couleur
                 alert("Vous n'avez séléctioné aucune couleur");
-            } 
+            }
 
             else if (selectedProduct.quantitySelectedProduct < 1) { // Vérifie le choix d'une quantité
                 alert("Veuillez renseigner la quantité");
-            } 
+            }
 
             else {
 
@@ -57,9 +99,9 @@ class addToCartController {
 
                     let findProducts = productArray.find(
                         (element) =>
-                        element.idSelectedProduct === selectedProduct.idSelectedProduct
-                        &&
-                        element.colorSelectedProduct === selectedProduct.colorSelectedProduct
+                            element.idSelectedProduct === selectedProduct.idSelectedProduct
+                            &&
+                            element.colorSelectedProduct === selectedProduct.colorSelectedProduct
                     );
 
                     // Si un produit avec la même ID et la même couleur est trouvé, incrémente le localStorage avec la nouvelle quantitée    
@@ -67,9 +109,12 @@ class addToCartController {
                     if (findProducts) {
 
                         let newQuantity = parseInt(findProducts.quantitySelectedProduct) + parseInt(selectedProduct.quantitySelectedProduct);
-                            findProducts.quantitySelectedProduct = newQuantity;
-                            localStorage.setItem("product", JSON.stringify(productArray));
-                            alert(`Ce produit est actuellement en ${findProducts.quantitySelectedProduct} exemplaires dans le panier`)
+                        findProducts.quantitySelectedProduct = newQuantity;
+                        if(newQuantity > 100) {
+                            newQuantity = 100;
+                        }
+                        localStorage.setItem("product", JSON.stringify(productArray));
+                        alert(`Ce produit est actuellement en ${findProducts.quantitySelectedProduct} exemplaires dans le panier`)
                     }
 
                     // Si aucun produit avec la même ID est trouvé, ajoute le nouveau produit au localStorage déjà crée précédement
@@ -80,10 +125,11 @@ class addToCartController {
                         alert("Produit également ajouté au panier !")
                     }
                 }
-            }        
+            }
         })
     }
 }
 
-const addCartApp = new addToCartController;
-addCartApp.addToCart();
+const productApp = new ProductController();
+productApp.display();
+productApp.addToCart();

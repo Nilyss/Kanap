@@ -3,8 +3,9 @@
 class cartController {
     constructor() {
         this.product = new ProductService();
-
     }
+
+     //******************* Affichage des produits dans le DOM et gestion de ceux-ci (quantité / prix / suppression )  *********************
 
     async showCart() {
 
@@ -91,11 +92,15 @@ class cartController {
 
                     let productChoosen = getProduct.filter(p => p.colorSelectedProduct === parentColor && p.idSelectedProduct === parentId)[0];
                     productChoosen.quantitySelectedProduct = newQuantity;
+                    if(productChoosen.quantitySelectedProduct > 100) {
+                        productChoosen.quantitySelectedProduct = 100;
+                    };
+
                     localStorage.setItem("product", JSON.stringify(getProduct));
 
-                    // Recharge la page pour mettre à jour le prix total du panier
+                    // met à jour dans le DOM la somme des quantité ainsi que du prix du panier
 
-                    this.product.totalCalculPrix();
+                    this.product.totalSum();
                 })
             })
 
@@ -130,8 +135,7 @@ class cartController {
             })
         }
 
-
-        // ************* Envois de la demande de commande *************
+        // ************* Formulaire de validation de la commande & envois de celle-ci à l'API *************
 
         // Récupération de chaque élément du form dans le DOM
 
