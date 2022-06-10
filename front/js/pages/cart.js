@@ -94,6 +94,7 @@ class cartController {
                     productChoosen.quantitySelectedProduct = newQuantity;
                     if(productChoosen.quantitySelectedProduct > 100) {
                         productChoosen.quantitySelectedProduct = 100;
+                        alert('Quantité maximal du produit ajouté : 100 exemplaire')
                     };
 
                     localStorage.setItem("product", JSON.stringify(getProduct));

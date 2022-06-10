@@ -6,7 +6,7 @@ class ProductsController {
         this.product = new ProductService();
     }
     async display() {
-        const insertDisplay = await this.product.getProductAll();
+        const insertDisplay = await this.product.getProductAll(); 
         insertDisplay
             .forEach(p => {
                 const itemsLink =

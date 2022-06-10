@@ -69,8 +69,9 @@ class ProductController {
 
             // Contrôle que la limite de quantité n'est pas dépassé
 
-            if (selectedProduct.quantitySelectedProduct > 100) {
+            if (selectedProduct.quantitySelectedProduct > 100 ) {
                 selectedProduct.quantitySelectedProduct = 100;
+                alert('Quantité maximale pour le produit, 100 unitées');
             };
  
             // Création du localStorage 
